@@ -19,9 +19,18 @@ def select_universe_value(dataframes, inactive_dates, date):
     ## value exists
     universe = [mnem for mnem in universe if not numpy.isnan(dataframes[mnem]['PTBV'][date])]
 
-    # rank by market value and get top 100
+    # rank by market value and get 90% of market value
     universe = sorted(universe, key=lambda mnem: dataframes[mnem]['MV'][date], reverse=True)
-    universe = universe[:100]
+    market_value_total = sum([dataframes[mnem]['MV'][date] for mnem in universe])
+    market_value_sum = 0
+    universe_90 = []
+    for mnem in universe:
+        market_value_sum += dataframes[mnem]['MV'][date]
+        if market_value_sum < (market_value_total * 0.9):
+            universe_90.append(mnem)
+
+    universe = universe_90
+    print(len(universe))
 
     # list of mnems
     return universe
