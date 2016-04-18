@@ -22,13 +22,13 @@ def select_universe_value(dataframes, inactive_dates, date):
     universe = [mnem for mnem in universe if 'MV' in dataframes[mnem].columns]
 
     # variable exists
-    universe = [mnem for mnem in universe if 'PTBV' in dataframes[mnem].columns]
+    universe = [mnem for mnem in universe if 'MTBV' in dataframes[mnem].columns]
 
     # valid date
     ## not in inactive date
     universe = [mnem for mnem in universe if not is_inactive(mnem, inactive_dates, date)]
     ## value exists
-    universe = [mnem for mnem in universe if not numpy.isnan(dataframes[mnem]['PTBV'][date])]
+    universe = [mnem for mnem in universe if not numpy.isnan(dataframes[mnem]['MTBV'][date])]
 
     # rank by market value and get 90% of market value
     universe = sorted(universe, key=lambda mnem: dataframes[mnem]['MV'][date], reverse=True)
@@ -48,7 +48,7 @@ def select_universe_value(dataframes, inactive_dates, date):
 
 
 def generate_signal_value_winner_loser(universe, dataframes, date):
-    universe = sorted(universe, key=lambda mnem: dataframes[mnem]['PTBV'][date])
+    universe = sorted(universe, key=lambda mnem: dataframes[mnem]['MTBV'][date])
     bins = 10
 
     percentile_width = int(len(universe) / bins)
@@ -70,7 +70,7 @@ def generate_signal_value_winner_loser(universe, dataframes, date):
 # value momentum everywhere formula
 def generate_signal_value_ranked(universe, dataframes, date):
     # highest to lowest PTBV
-    universe = sorted(universe, key=lambda mnem: dataframes[mnem]['PTBV'][date], reverse=True)
+    universe = sorted(universe, key=lambda mnem: dataframes[mnem]['MTBV'][date], reverse=True)
     ranks = range(1, len(universe) + 1)
     ranks_sum = sum(ranks) / len(ranks)
     c = (4 / sum(ranks))
